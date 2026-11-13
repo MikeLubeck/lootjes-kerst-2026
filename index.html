@@ -78,6 +78,8 @@
       <form id="wensForm">
         <label for="omschr">Wat wil je graag?</label>
         <input id="omschr" maxlength="300" placeholder="Bijv. een bordspel of een goed boek">
+        <label for="link">Link (optioneel)</label>
+        <input id="link" inputmode="url" maxlength="1000" placeholder="https://...">
         <button class="full" type="submit">Toevoegen</button>
         <div class="err" id="wensErr"></div>
       </form>
@@ -159,11 +161,12 @@
   };
   $("wensForm").addEventListener("submit", function(e){
     e.preventDefault();
-    var o = $("omschr").value.trim();
+    var o = $("omschr").value.trim(), l = $("link").value.trim();
     if (!o){ $("wensErr").textContent = "Vul in wat je wilt."; return; }
+    if (l && !safeLink(l)){ $("wensErr").textContent = "De link moet beginnen met http:// of https://"; return; }
     $("wensErr").textContent = "";
-    api("kerst2026_wensen", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ naam: me, omschrijving: o, link: null }) })
-      .then(function(){ $("omschr").value = ""; return loadMine(); })
+    api("kerst2026_wensen", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ naam: me, omschrijving: o, link: l || null }) })
+      .then(function(){ $("omschr").value = ""; $("link").value = ""; return loadMine(); })
       .catch(function(err){ $("wensErr").textContent = err.message; });
   });
 
