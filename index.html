@@ -73,19 +73,11 @@
 
     <div class="card">
       <h2>Mijn verlanglijstje</h2>
-      <div class="hint">Zoek iets op bol.com, kopieer de link en plak hem hieronder.</div>
-
-      <label for="zoek">Zoeken op bol.com</label>
-      <form class="row" id="zoekForm">
-        <input id="zoek" placeholder="Bijv. bordspel">
-        <button class="bol" type="submit">Zoek</button>
-      </form>
+      <div class="hint">Typ hieronder je wensen. Voeg elk cadeau apart toe aan je lijstje.</div>
 
       <form id="wensForm">
         <label for="omschr">Wat wil je graag?</label>
-        <input id="omschr" maxlength="300" placeholder="Bijv. Catan basisspel">
-        <label for="link">Link (optioneel)</label>
-        <input id="link" inputmode="url" placeholder="https://www.bol.com/...">
+        <input id="omschr" maxlength="300" placeholder="Bijv. een bordspel of een goed boek">
         <button class="full" type="submit">Toevoegen</button>
         <div class="err" id="wensErr"></div>
       </form>
@@ -165,19 +157,13 @@
     $("lotBox").classList.remove("hidden"); $("lotLijst").classList.remove("hidden"); $("toonLot").classList.add("hidden");
     loadLot().catch(function(){ $("lotWensen").innerHTML = '<div class="empty">Lijstje kon niet geladen worden.</div>'; });
   };
-  $("zoekForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    var q = $("zoek").value.trim(); if (!q) return;
-    window.open("https://www.bol.com/nl/nl/s/?searchtext=" + encodeURIComponent(q), "_blank", "noopener");
-  });
   $("wensForm").addEventListener("submit", function(e){
     e.preventDefault();
-    var o = $("omschr").value.trim(), l = $("link").value.trim();
+    var o = $("omschr").value.trim();
     if (!o){ $("wensErr").textContent = "Vul in wat je wilt."; return; }
-    if (l && !safeLink(l)){ $("wensErr").textContent = "De link moet beginnen met https://"; return; }
     $("wensErr").textContent = "";
-    api("kerst2026_wensen", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ naam: me, omschrijving: o, link: l || null }) })
-      .then(function(){ $("omschr").value = ""; $("link").value = ""; return loadMine(); })
+    api("kerst2026_wensen", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ naam: me, omschrijving: o, link: null }) })
+      .then(function(){ $("omschr").value = ""; return loadMine(); })
       .catch(function(err){ $("wensErr").textContent = err.message; });
   });
 
