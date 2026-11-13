@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lootjes Kerst 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f2a22;--card:#fdf8ef;--ink:#1d2a25;--muted:#6b756f;--red:#b8322a;--gold:#d9a441;--line:#e6dccb;--blue:#0000a4}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 10%,#1d4a3b,var(--bg) 60%);font-family:Inter,system-ui,sans-serif;color:var(--ink);padding:24px 16px}
+  .wrap{max-width:460px;margin:0 auto}
+  .card{background:var(--card);border-radius:20px;padding:26px 22px;box-shadow:0 20px 60px rgba(0,0,0,.35);margin-bottom:16px}
+  .center{text-align:center}
+  h1{font-family:Fraunces,serif;font-size:30px;margin:4px 0 6px;color:var(--red)}
+  h2{font-family:Fraunces,serif;font-size:21px;margin:0 0 4px}
+  .meta,.hint{color:var(--muted);font-size:14px}
+  .star{font-size:34px}
+  label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+  input{width:100%;font:inherit;font-size:16px;padding:12px 13px;border:1.5px solid #d8d0c2;border-radius:12px;background:#fff;outline:none}
+  input:focus{border-color:var(--red)}
+  button{font:inherit;font-weight:600;font-size:15px;padding:12px 14px;border:0;border-radius:12px;background:var(--red);color:#fff;cursor:pointer}
+  button.full{width:100%;margin-top:12px}
+  button.bol{background:var(--blue)}
+  button.ghost{background:transparent;color:var(--muted);font-weight:500;padding:8px}
+  .row{display:flex;gap:8px;margin-top:6px}
+  .row input{flex:1}
+  .err{color:var(--red);font-size:14px;min-height:18px;margin-top:8px}
+  .lot{margin:16px 0 4px;padding:22px 14px;border:2px dashed var(--gold);border-radius:16px;background:#fff9ea;text-align:center}
+  .lot small{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+  .lot strong{font-family:Fraunces,serif;font-size:36px}
+  ul{list-style:none;padding:0;margin:12px 0 0}
+  li{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+  li:first-child{border-top:0}
+  li .txt{flex:1;font-size:15px;line-height:1.35;word-break:break-word}
+  li a{color:var(--blue);font-size:13px;font-weight:600;text-decoration:none}
+  li .del{background:transparent;color:var(--muted);padding:0 4px;font-size:18px;line-height:1}
+  .empty{color:var(--muted);font-size:14px;padding:10px 0}
+  .hidden{display:none}
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card center" id="login">
+    <div class="star">🎄</div>
+    <h1>Lootjes Kerst 2026</h1>
+    <div class="meta">Vrijdag 25 december · cadeau van € 25</div>
+    <form id="loginForm" style="text-align:left">
+      <label for="naam">Vul je eigen naam in</label>
+      <input id="naam" autocomplete="off" placeholder="Bijv. Amber">
+      <button class="full" type="submit">Verder</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+    <div class="hint" style="margin-top:14px">Deelnemers: Amber, Aad, Chris, Ian, Jayder, Lea, Louise, Mike en Ronald</div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="card">
+      <div class="topbar">
+        <h2 id="hallo"></h2>
+        <button class="ghost" id="uit">Wissel</button>
+      </div>
+      <div class="lot hidden" id="lotBox"><small>Jij koopt een cadeau voor</small><strong id="lot"></strong></div>
+      <button class="full" id="toonLot">Toon mijn lootje</button>
+      <div id="lotLijst" class="hidden">
+        <label>Verlanglijstje van <span id="lotNaam2"></span></label>
+        <ul id="lotWensen"></ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Mijn verlanglijstje</h2>
+      <div class="hint">Zoek iets op bol.com, kopieer de link en plak hem hieronder.</div>
+
+      <label for="zoek">Zoeken op bol.com</label>
+      <form class="row" id="zoekForm">
+        <input id="zoek" placeholder="Bijv. bordspel">
+        <button class="bol" type="submit">Zoek</button>
+      </form>
+
+      <form id="wensForm">
+        <label for="omschr">Wat wil je graag?</label>
+        <input id="omschr" maxlength="300" placeholder="Bijv. Catan basisspel">
+        <label for="link">Link (optioneel)</label>
+        <input id="link" inputmode="url" placeholder="https://www.bol.com/...">
+        <button class="full" type="submit">Toevoegen</button>
+        <div class="err" id="wensErr"></div>
+      </form>
+
+      <ul id="mijnWensen"></ul>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  // Vul hier je eigen Supabase-gegevens in (Project Settings > API)
+  var SUPABASE_URL = "https://inkturakseevcmmebpnq.supabase.co";
+  var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlua3R1cmFrc2VldmNtbWVicG5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyOTkwNTYsImV4cCI6MjEwOTg3NTA1Nn0.S0lJIh30nJV8O_m-2JWrWmNg1j9V4HVW0zFKIK-nLQg";
+
+  // Versleutelde loting (partners uitgesloten). Niet aanpassen.
+  var RAW = "95|JH0+Mj06LX1lf30TMCo2LDp9c399Pj47fWV/fRI2NDp9c399PDctNix9ZX99DTAxPjM7fXN/fTY+MX1lf30eMj06LX1zf301PiY7Oi19ZX99HDctNix9c399Mzo+fWV/fRU+Jjs6LX1zf30zMCo2LDp9ZX99Ezo+fXN/fTI2NDp9ZX99Fj4xfXN/fS0wMT4zO31lf30ePjt9Ig==";
+  var p = RAW.split("|"), k = +p[0], b = atob(p[1]), s = "";
+  for (var i = 0; i < b.length; i++) s += String.fromCharCode(b.charCodeAt(i) ^ k);
+  var LOT = JSON.parse(s);
+
+  var $ = function(id){ return document.getElementById(id); };
+  var me = null;
+  function cap(n){ return n.charAt(0).toUpperCase() + n.slice(1); }
+  function api(path, opts){
+    opts = opts || {};
+    opts.headers = Object.assign({ apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, opts.headers || {});
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, opts).then(function(r){
+      if (!r.ok) throw new Error("Opslaan mislukt (" + r.status + ")");
+      return r.text().then(function(body){ return body ? JSON.parse(body) : null; });
+    });
+  }
+  function safeLink(u){ return /^https?:\/\//i.test(u || "") ? u : null; }
+
+  function render(list, ul, canDelete){
+    ul.innerHTML = "";
+    if (!list.length){ var e = document.createElement("div"); e.className = "empty"; e.textContent = canDelete ? "Nog niets op je lijstje." : "Nog niets op het lijstje. Kijk later nog eens."; ul.appendChild(e); return; }
+    list.forEach(function(w){
+      var li = document.createElement("li");
+      var t = document.createElement("div"); t.className = "txt"; t.textContent = w.omschrijving;
+      var l = safeLink(w.link);
+      if (l){ t.appendChild(document.createElement("br")); var a = document.createElement("a"); a.href = l; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Bekijk product"; t.appendChild(a); }
+      li.appendChild(t);
+      if (canDelete){
+        var d = document.createElement("button"); d.className = "del"; d.textContent = "×"; d.title = "Verwijderen";
+        d.onclick = function(){ api("kerst2026_wensen?id=eq." + w.id, { method: "DELETE" }).then(loadMine).catch(function(err){ $("wensErr").textContent = err.message; }); };
+        li.appendChild(d);
+      }
+      ul.appendChild(li);
+    });
+  }
+  function load(naam){ return api("kerst2026_wensen?select=*&naam=eq." + encodeURIComponent(naam) + "&order=created_at.asc"); }
+  function loadMine(){ return load(me).then(function(r){ render(r, $("mijnWensen"), true); }).catch(function(e){ $("wensErr").textContent = e.message; }); }
+  function loadLot(){ var n = LOT[me].toLowerCase(); return load(n).then(function(r){ render(r, $("lotWensen"), false); }); }
+
+  function start(naam){
+    me = naam;
+    try { localStorage.setItem("lootjes-naam", naam); } catch(e){}
+    $("login").classList.add("hidden"); $("app").classList.remove("hidden");
+    $("hallo").textContent = "Hoi " + cap(naam) + "!";
+    $("lotBox").classList.add("hidden"); $("lotLijst").classList.add("hidden"); $("toonLot").classList.remove("hidden");
+    loadMine();
+  }
+
+  $("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var n = $("naam").value.trim().toLowerCase();
+    if (!LOT[n]){ $("loginErr").textContent = "Die naam staat niet op de lijst. Check de spelling."; return; }
+    $("loginErr").textContent = ""; start(n);
+  });
+  $("uit").onclick = function(){
+    try { localStorage.removeItem("lootjes-naam"); } catch(e){}
+    me = null; $("naam").value = ""; $("app").classList.add("hidden"); $("login").classList.remove("hidden");
+  };
+  $("toonLot").onclick = function(){
+    $("lot").textContent = LOT[me]; $("lotNaam2").textContent = LOT[me];
+    $("lotBox").classList.remove("hidden"); $("lotLijst").classList.remove("hidden"); $("toonLot").classList.add("hidden");
+    loadLot().catch(function(){ $("lotWensen").innerHTML = '<div class="empty">Lijstje kon niet geladen worden.</div>'; });
+  };
+  $("zoekForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var q = $("zoek").value.trim(); if (!q) return;
+    window.open("https://www.bol.com/nl/nl/s/?searchtext=" + encodeURIComponent(q), "_blank", "noopener");
+  });
+  $("wensForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var o = $("omschr").value.trim(), l = $("link").value.trim();
+    if (!o){ $("wensErr").textContent = "Vul in wat je wilt."; return; }
+    if (l && !safeLink(l)){ $("wensErr").textContent = "De link moet beginnen met https://"; return; }
+    $("wensErr").textContent = "";
+    api("kerst2026_wensen", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ naam: me, omschrijving: o, link: l || null }) })
+      .then(function(){ $("omschr").value = ""; $("link").value = ""; return loadMine(); })
+      .catch(function(err){ $("wensErr").textContent = err.message; });
+  });
+
+  try { var saved = localStorage.getItem("lootjes-naam"); if (saved && LOT[saved]) start(saved); } catch(e){}
+})();
+</script>
+</body>
+</html>
